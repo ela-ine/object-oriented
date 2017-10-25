@@ -18,6 +18,31 @@ class Bird:
     def display(self):
         self.canvas.create_rectangle(self.x, self.y, self.x + self.size*2, self.y + self.size,
                                      fill=self.fill_color)
+    def move(self, percentage):
+        self.x += self.x_speed
+        self.y += self.y_speed
+
+      # if off the right side of the screen
+      # move to just off the left side of the screen
+        if (self.x > self.canvas.winfo_width()):
+            self.x = -self.size
+
+      # if off the top or bottom of the screen, reverse y speed
+        if (self.y < -self.size or self.y > self.canvas.winfo_height()):
+            self.y_speed = -self.y_speed
+
+        if (self.y > self.canvas.winfo_height()):
+            self.y = -self.size
+            
+        if (random.random() > percentage):
+            self.y_speed += random.uniform(-0.5, 0.5)
+            self.y_speed = max(self.min_y_speed, self.y_speed)
+            self.y_speed = min(self.max_y_speed, self.y_speed)
+
+            self.x_speed += random.uniform(-0.5, 0.5)
+            self.x_speed = max(self.min_x_speed, self.x_speed)
+            self.x_speed = min(self.max_x_speed, self.x_speed)
+
 
 class SoaringBird(Bird):
 
@@ -34,14 +59,7 @@ class SoaringBird(Bird):
     self.canvas.create_oval(self.x, self.y, self.x + self.size*2, self.y + self.size,
                             fill=self.fill_color)
   def  move(self):
-    self.x += self.x_speed
-
-    # if off the right side of the screen,
-    # move to just off the left side of the screen
-    if (self.x > self.canvas.winfo_width()):
-      self.x = -self.size
-
-
+    Bird.move(self, 1)
 
 class FlittingBird(Bird):
 
@@ -57,27 +75,7 @@ class FlittingBird(Bird):
 
 
   def move(self):
-    self.x += self.x_speed
-    self.y += self.y_speed
-
-    # if off the right side of the screen
-    # move to just off the left side of the screen
-    if (self.x > self.canvas.winfo_width()):
-      self.x = -self.size
-
-    # if off the top or bottom of the screen, reverse y speed
-    if (self.y < -self.size or self.y > self.canvas.winfo_height()):
-      self.y_speed = -self.y_speed
-
-    # about 20% of the time, change speed a bit
-    if (random.random() > 0.8):
-      self.y_speed += random.uniform(-0.5, 0.5)
-      self.y_speed = max(self.min_y_speed, self.y_speed)
-      self.y_speed = min(self.max_y_speed, self.y_speed)
-
-      self.x_speed += random.uniform(-0.5, 0.5)
-      self.x_speed = max(self.min_x_speed, self.x_speed)
-      self.x_speed = min(self.max_x_speed, self.x_speed)
+    Bird.move(self, 0.8)
 
 
 class FallingFeather(Bird):
