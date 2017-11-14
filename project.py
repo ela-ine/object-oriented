@@ -33,16 +33,20 @@ class Cat:
         canvas.create_oval(self.x, self.y, self.x + self.size, self.y + self.size,
                            fill=self.color)
 
-    # another thing to figure out: how to make the cats randomly appear in the holes at certain intervals
+# def drawCat(): how to make the cats randomly appear in the holes at certain intervals
+    # interval = 33
+    # for every 33 milliseconds
 
-# def clickCat:
-    # if cat is clicked (I don't know how to say this):
-        # score = score + 1
-    # else:
-        # heart = heart - 1
-        # if heart = 0:
+def clickCat(event):
+    if event.x == range(Cat.x - Cat.size, Cat.x + Cat.size) and
+                        event.y == range(Cat.y - Cat.size, Cat.y + Cat.size):
+        score == score + 1
+    else:
+        heart -= 1
+        # if heart == 0:
             # print "GAME OVER"
-        # else: continue???
+            # reset()
+        # else: drawCat()
 
 def draw(canvas):
     canvas.delete(Tkinter.ALL)
@@ -50,6 +54,9 @@ def draw(canvas):
     for gameobject in gameobjects:
         gameobject.update()
         gameobject.draw(canvas)
+
+        delay = 33
+        canvas.after(delay, draw, canvas)
 
 def reset(event):
     global gameobjects
@@ -64,7 +71,7 @@ if __name__ == '__main__':
     root = Tkinter.Tk()
     canvas = Tkinter.Canvas(root, width=800, height=800)
     canvas.pack()
-
+    addCircles()
     # root.bind('<Button-1>', clickCat)
     # how would I call the function to make the game board?
 

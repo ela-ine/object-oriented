@@ -1,8 +1,9 @@
 import Tkinter # Python graphics library
 import random
+import abc
 
-class Bird:
-
+class AerialObject:
+    __metaclass__ = abc.ABCMeta
     def __init__(self, canvas, min_x_speed, max_x_speed, min_y_speed, max_y_speed, size):
         self.canvas = canvas
         # winfo gets us the current size of the canvas
@@ -31,9 +32,7 @@ class Bird:
         if (self.y < -self.size or self.y > self.canvas.winfo_height()):
             self.y_speed = -self.y_speed
 
-        if (self.y > self.canvas.winfo_height()):
-            self.y = -self.size
-            
+
         if (random.random() > percentage):
             self.y_speed += random.uniform(-0.5, 0.5)
             self.y_speed = max(self.min_y_speed, self.y_speed)
@@ -44,7 +43,7 @@ class Bird:
             self.x_speed = min(self.max_x_speed, self.x_speed)
 
 
-class SoaringBird(Bird):
+class SoaringBird(AerialObject):
 
   def __init__(self, canvas):
     self.canvas = canvas
@@ -53,15 +52,15 @@ class SoaringBird(Bird):
     self.min_y_speed = 0
     self.max_y_speed = 0
     self.size = 30.0
-    Bird.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
+    AerialObject.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
 
-  def display2(self):
+  def display(self):
     self.canvas.create_oval(self.x, self.y, self.x + self.size*2, self.y + self.size,
                             fill=self.fill_color)
   def  move(self):
-    Bird.move(self, 1)
+    AerialObject.move(self, 1)
 
-class FlittingBird(Bird):
+class FlittingBird(AerialObject):
 
   def __init__(self, canvas):
     self.canvas = canvas
@@ -71,14 +70,14 @@ class FlittingBird(Bird):
     self.min_y_speed = -1.0
     self.max_y_speed = 1.0
     self.size = 15.0
-    Bird.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
+    AerialObject.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
 
 
   def move(self):
-    Bird.move(self, 0.8)
+    AerialObject.move(self, 0.8)
 
 
-class FallingFeather(Bird):
+class FallingFeather(AerialObject):
 
   def __init__(self, canvas):
     self.canvas = canvas
@@ -89,7 +88,7 @@ class FallingFeather(Bird):
     self.min_y_speed = 0.5
     self.max_y_speed = 1.5
     self.size = 5.0
-    Bird.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
+    AerialObject.__init__(self, self.canvas, self.min_x_speed, self.max_x_speed, self.min_y_speed, self.max_y_speed, self.size)
 
 
   def move(self):
@@ -113,24 +112,23 @@ if __name__ == '__main__':
     canvas = Tkinter.Canvas(root, width=600, height=400)
     canvas.pack()
     canvas.update() # need this for the canvas object to have the correct height set
-    birds = []
+    aerial_objects = []
     soaring = []
     for x in range(5):
-        birds.append(FlittingBird(canvas))
-        birds.append(FallingFeather(canvas))
-        birds.append(FallingFeather(canvas))
-    for x in range(5):
+        aerial_objects.append(FlittingBird(canvas))
+        aerial_objects.append(FallingFeather(canvas))
+        aerial_objects.append(FallingFeather(canvas))
         soaring.append(SoaringBird(canvas))
 
     # define the draw loop
     def draw():
       canvas.delete(Tkinter.ALL)
-      for bird in birds:
-          bird.move()
-          bird.display()
+      for thing in aerial_objects:
+          thing.move()
+          thing.display()
       for bird in soaring:
           bird.move()
-          bird.display2()
+          bird.display()
       delay = 33 # milliseconds, so about 30 frames per second
       canvas.after(delay, draw) # call this draw function again after the delay
 
