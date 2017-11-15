@@ -10,8 +10,7 @@ class Circles:
         self.color = '#0'
 
     def draw(self, canvas, x, y):
-        canvas.create_oval(x, y, x + self.size, y + self.size,
-                           fill = self.color)
+        canvas.create_oval(x, y, x + self.size, y + self.size, fill = self.color)
     def arrange():
         for x in range(0,2):
             draw(self, canvas, x * self.size + 2, 20)
@@ -28,18 +27,33 @@ class Cat:
         self.y = y
         self.color = '#16776960'
         self.size = 30
+        self.count = 150 #milliseconds
+        self.round = 0
+        self.visible = False
 
     def draw(self,canvas): # eventually will hopefully be a sprite, but it's a circle for now
-        canvas.create_oval(self.x, self.y, self.x + self.size, self.y + self.size,
-                           fill=self.color)
+        if self.count == 0: # makes the cat appear
+            self.visible == False
+            self.round += 1
+            self.count == 150 - self.round
+        else:
+            canvas.create_oval(self.x, self.y, self.x + self.size, self.y + self.size,
+                               fill=self.color)
+            self.visible == True
+            self.count -= 1
 
 # def drawCat(): how to make the cats randomly appear in the holes at certain intervals
     # interval = 33
-    # for every 33 milliseconds
+    # hole = random.randint(9)
+    # for every (time):
+        #
+        #drawCat() statemachine
+    # hidden, how many ticks (time the draw() has been called)
+    # time to appear, counter
+    # when counter hits 0, --> visible and reset, hold for x ticks, --> invisible
 
 def clickCat(event):
-    if event.x == range(Cat.x - Cat.size, Cat.x + Cat.size) and
-                        event.y == range(Cat.y - Cat.size, Cat.y + Cat.size):
+    if event.x == range(Cat.x - Cat.size, Cat.x + Cat.size) and event.y == range(Cat.y - Cat.size, Cat.y + Cat.size):
         score == score + 1
     else:
         heart -= 1
@@ -71,7 +85,6 @@ if __name__ == '__main__':
     root = Tkinter.Tk()
     canvas = Tkinter.Canvas(root, width=800, height=800)
     canvas.pack()
-    addCircles()
     # root.bind('<Button-1>', clickCat)
     # how would I call the function to make the game board?
 
