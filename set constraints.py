@@ -63,12 +63,12 @@ def addTriangle(event):
 class Polygon(Shape):
 
     def draw(self,canvas):
-        __random_polygon = [] # private
+        random_polygon = [] # private
 
         for side in range(self.NUM_SIDES):
-            __random_polygon.append(self.x + self.Z * math.sin(side * 2 * math.pi / self.NUM_SIDES))
-            __random_polygon.append(self.y + self.Z * math.cos(side * 2 * math.pi / self.NUM_SIDES))
-        canvas.create_polygon(*__random_polygon, fill=self.COLOR)
+            random_polygon.append(self.x + self.Z * math.sin(side * 2 * math.pi / self.NUM_SIDES))
+            random_polygon.append(self.y + self.Z * math.cos(side * 2 * math.pi / self.NUM_SIDES))
+        canvas.create_polygon(*random_polygon, fill=self.COLOR)
 
 def addPolygon(event):
         global game_objects
@@ -91,25 +91,25 @@ def draw(canvas):
         game_object.update()
         game_object.draw(canvas)
 
-    __delay = 33 # private
+    delay = 33 # private
     canvas.after(__delay, draw, canvas)
 
 
 if __name__ == '__main__':
 
-    # create the graphics ROOT and a 400x400 canvas
-    ROOT = Tkinter.Tk()
-    CANVAS = Tkinter.Canvas(ROOT, width=800, height=800)
-    CANVAS.pack()
+    # create the graphics root and a 400x400 canvas
+    root = Tkinter.Tk()
+    canvas = Tkinter.canvas(root, width=800, height=800)
+    canvas.pack()
 
     # if the user presses a key or the mouse, call our handlers
-    ROOT.bind('<Key-r>', reset)
-    ROOT.bind('<Button-2>', addCircle)
-    ROOT.bind('<Key-s>', addRectangle)
-    ROOT.bind('<Key-t>', addTriangle)
-    ROOT.bind('<Button-1>', addPolygon)
+    root.bind('<Key-r>', reset)
+    root.bind('<Button-2>', addCircle)
+    root.bind('<Key-s>', addRectangle)
+    root.bind('<Key-t>', addTriangle)
+    root.bind('<Button-1>', addPolygon)
 
     # start the draw loop
-    draw(CANVAS)
+    draw(canvas)
 
-    ROOT.mainloop() # keep the window open
+    root.mainloop() # keep the window open

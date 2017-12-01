@@ -1,20 +1,28 @@
 import Tkinter
+import math
+import random
 
 gameobjects = []
-score = []
-heart = [3]
+score = 0
+heart = 3
 
 class Circles:
+    number = 9
     def __init__(self, canvas):
-        self.size = 50
-        self.color = '#0'
+        self.size = 100
+        self.color = '#000000'
+        self.space = 100
 
     def draw(self, canvas, x, y):
         canvas.create_oval(x, y, x + self.size, y + self.size, fill = self.color)
-    def arrange():
-        for x in range(0,2):
-            draw(self, canvas, x * self.size + 2, 20)
-            # still trying to figure out the y coordinate
+    def arrange(self):
+        for n in range(self.number):
+            x = (n % 3) * (self.size+ self.space) + 150
+            y = (math.floor(n/3) + 1) * self.space
+            Circles.draw(self, canvas, x, y)
+    @staticmethod
+    def coordinates(n):
+        return ((n % 3) * (100 + 100) + 150, (math.floor(n/3) + 1) * 100)
 
 def addCircles(event):
     global gameobjects
@@ -23,70 +31,78 @@ def addCircles(event):
 
 class Cat:
     def __init__(self, canvas):
-        self.x = x
-        self.y = y
-        self.color = '#16776960'
-        self.size = 30
-        self.count = 150 #milliseconds
+        self.x = 0
+        self.y = 0
+        self.color = '#6EDFFF'
+        self.size = 50
+        self.count = 0 #milliseconds
         self.round = 0
         self.visible = False
 
-    def draw(self,canvas): # eventually will hopefully be a sprite, but it's a circle for now
+    def draw(self, canvas, x, y):
         if self.count == 0: # makes the cat appear
-            self.visible == False
+            self.x = x
+            self.y = y
+            self.visible = False
             self.round += 1
-            self.count == 150 - self.round
+            self.count = 150 - self.round
         else:
             canvas.create_oval(self.x, self.y, self.x + self.size, self.y + self.size,
-                               fill=self.color)
-            self.visible == True
+                               fill=self.color) # this needs to be inside one of the Circles
+            self.visible = True
             self.count -= 1
 
-# def drawCat(): how to make the cats randomly appear in the holes at certain intervals
-    # interval = 33
-    # hole = random.randint(9)
-    # for every (time):
-        #
-        #drawCat() statemachine
-    # hidden, how many ticks (time the draw() has been called)
-    # time to appear, counter
-    # when counter hits 0, --> visible and reset, hold for x ticks, --> invisible
+    def click(self, event):
+        if self.x < event.x < self.x + self.size and self.y < event.y < self.y + self.size and self.count >= 0:
+            global score
+            score += 1
+            self.visible = False
+            self.count = 0
+            print "score = %d" % score
+        else:
+            global heart
+            heart -= 1
+            print "hearts = %d" % heart
+            #if heart <= 0:
+                #print "GAME OVER"
+                #reset()
 
-def clickCat(event):
-    if event.x == range(Cat.x - Cat.size, Cat.x + Cat.size) and event.y == range(Cat.y - Cat.size, Cat.y + Cat.size):
-        score == score + 1
-    else:
-        heart -= 1
-        # if heart == 0:
-            # print "GAME OVER"
-            # reset()
-        # else: drawCat()
 
-def draw(canvas):
-    canvas.delete(Tkinter.ALL)
+def addCats(event):
     global gameobjects
+    gameobjects.append(Cat(event.x, event.y))
+
+def draw(canvas, cat):
+    canvas.delete(Tkinter.ALL)
+
+    global gameobjects, circles
+    circles.arrange()
+
     for gameobject in gameobjects:
         gameobject.update()
         gameobject.draw(canvas)
+    circlenumber = random.randint(0, Circles.number)
+    x, y = Circles.coordinates(circlenumber)
 
-        delay = 33
-        canvas.after(delay, draw, canvas)
+    cat.draw(canvas, x, y)
+    delay = 33
+    canvas.after(delay, draw, canvas, cat)
 
 def reset(event):
     global gameobjects
     gameobjects = []
     global score
-    score = []
+    score = 0
     global heart
-    heart = [3]
+    heart = 3
 
 if __name__ == '__main__':
 
     root = Tkinter.Tk()
     canvas = Tkinter.Canvas(root, width=800, height=800)
     canvas.pack()
-    # root.bind('<Button-1>', clickCat)
-    # how would I call the function to make the game board?
-
-    draw(canvas)
+    cat = Cat(canvas)
+    root.bind('<Button-1>', cat.click) # cat.Click shouldn't be bound to Button-1... define 2 separate f(x)?
+    circles = Circles(canvas)
+    draw(canvas, cat)
     root.mainloop()
