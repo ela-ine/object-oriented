@@ -11,6 +11,7 @@ class Circles:
     def __init__(self, canvas):
         self.size = 100
         self.color = '#000000'
+        self.number = 9
 
     def draw(self, canvas, x, y):
         canvas.create_oval(x, y, x + self.size, y + self.size, fill = self.color)
@@ -21,34 +22,37 @@ class Circles:
             Circles.draw(self, canvas, x, y)
     @staticmethod
     def coordinates(n):
-        return ((n % 3) * (100 + 50) + 150, (math.floor(n/3) + 1) * 120)
+        return ((n % 3) * (100 + 50) + 150 + 10, (math.floor(n/3) + 1) * 120 + 10)
 
 def addCircles(event):
     global gameobjects
     gameobjects.append(Circles(event.x, event.y))
 
 
-class Cat:
+class Mole:
     clickstatus = False
     def __init__(self, canvas):
         self.x = 0
         self.y = 0
         self.color = '#6EDFFF'
         self.size = 80
-        self.count = 0 #counts the milliseconds that the cat is visible
+        self.count = 0 #counts the milliseconds that the mole is visible
         self.round = 0
         self.visible = False
 
     def draw(self, canvas, x, y):
-        if self.count == 0: # makes the cat disappear
+        clickstatus = False
+        if self.count == 0: # makes the mole disappear
             self.x = x
             self.y = y
             self.visible = False
             self.round += 1
             self.count = 100 - self.round
         else:
+            # img = Tkinter.PhotoImage(file = "/Users/elaine/Documents/cat.gif")
+            # canvas.create_image(self.x, self.y, img)
             canvas.create_oval(self.x, self.y, self.x + self.size, self.y + self.size,
-                               fill=self.color) # this needs to be inside one of the Circles
+                               fill=self.color)
             self.visible = True
             self.count -= 1
             clickstatus = False
@@ -59,7 +63,7 @@ class Cat:
         else:
             pass
 
-    def click(self, event): #need a function that docks a heart for not clicking at all
+    def click(self, event): #rewards point for clicking mole, docks a heart for not clicking at all
         clickstatus = True
         if self.x < event.x < self.x + self.size and self.y < event.y < self.y + self.size and self.count >= 0:
             global score
@@ -71,32 +75,35 @@ class Cat:
             heart -= 1
 
 
-def addCats(event):
+def addMoles(event):
     global gameobjects
-    gameobjects.append(Cat(event.x, event.y))
+    gameobjects.append(Mole(event.x, event.y))
 
-def draw(canvas, cat):
+def draw(canvas, mole):
     canvas.delete(Tkinter.ALL)
-
     global gameobjects, circles
     circles.arrange()
+    circlenumber = random.randint(1, Circles.number-1) # references one of the 9 circles
+    x, y = Circles.coordinates(circlenumber) # calculates coordinates of randomly selected circle
+    delay = 33
 
     for gameobject in gameobjects:
         gameobject.update()
         gameobject.draw(canvas)
-    circlenumber = random.randint(1, Circles.number)
-    x, y = Circles.coordinates(circlenumber)
 
     canvas.create_text(50, 40, text = "score = %d" % score)
     canvas.create_text(52, 70, text = "hearts = %d" % heart)
 
-    if heart <= 0:
-        canvas.create_text(300, 300, text = "GAME OVER") #need to make this project for more than 1 frame
-        reset(canvas)
+    mole.draw(canvas, x, y)
+    canvas.after(delay, draw, canvas, mole)
 
-    cat.draw(canvas, x, y)
-    delay = 33
-    canvas.after(delay, draw, canvas, cat)
+    if heart <= 0:
+        canvas.delete(Tkinter.ALL)
+        canvas.create_text(400, 200, text = "GAME OVER", font = "Sans-serif 30 bold", justify = "center")
+        canvas.create_text(400, 250, text = "CLICK TO PLAY AGAIN",font = "Sans-serif 20 italic", justify = "center")
+        # need to reference click to reset(canvas)
+        # if mole.clickstatus == True:
+        reset(canvas)
 
 def reset(event):
     global gameobjects
@@ -109,10 +116,10 @@ def reset(event):
 if __name__ == '__main__':
 
     root = Tkinter.Tk()
-    canvas = Tkinter.Canvas(root, width=800, height=800)
+    canvas = Tkinter.Canvas(root, width=1200, height=1200)
     canvas.pack()
-    cat = Cat(canvas)
-    root.bind('<Button-1>', cat.click)
+    mole = Mole(canvas)
+    root.bind('<Button-1>', mole.click)
     circles = Circles(canvas)
-    draw(canvas, cat)
+    draw(canvas, mole)
     root.mainloop()
